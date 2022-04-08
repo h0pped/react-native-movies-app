@@ -21,7 +21,7 @@ import Error from '../components/Error.js';
 
 const dimensions = Dimensions.get('screen');
 
-const Home = () => {
+const Home = ({navigation}) => {
   //   const [movie, setMovie] = useState('');
   const [error, setError] = useState();
   const [isLoaded, setIsLoaded] = useState();
@@ -83,22 +83,38 @@ const Home = () => {
           )}
           {popularMovies.length > 0 && (
             <View style={styles.carousel}>
-              <List title="Popular Movies" content={popularMovies} />
+              <List
+                navigation={navigation}
+                title="Popular Movies"
+                content={popularMovies}
+              />
             </View>
           )}
           {popularTV.length > 0 && (
             <View style={styles.carousel}>
-              <List title="Popular TV shows" content={popularTV} />
+              <List
+                navigation={navigation}
+                title="Popular TV shows"
+                content={popularTV}
+              />
             </View>
           )}
           {familyMovies.length > 0 && (
             <View style={styles.carousel}>
-              <List title="Family Movies" content={familyMovies} />
+              <List
+                navigation={navigation}
+                title="Family Movies"
+                content={familyMovies}
+              />
             </View>
           )}
           {documentaryMovies.length > 0 && (
             <View style={{...styles.carousel, ...styles.carouselLast}}>
-              <List title="Documentary Movies" content={documentaryMovies} />
+              <List
+                navigation={navigation}
+                title="Documentary Movies"
+                content={documentaryMovies}
+              />
             </View>
           )}
         </ScrollView>
