@@ -25,6 +25,7 @@ const Home = ({navigation}) => {
   //   const [movie, setMovie] = useState('');
   const [error, setError] = useState();
   const [isLoaded, setIsLoaded] = useState();
+  const [moviesSlider, setMoviesSlider] = useState([]);
   const [moviesImages, setMoviesImages] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
   const [popularTV, setPopularTV] = useState([]);
@@ -56,6 +57,7 @@ const Home = ({navigation}) => {
             movieItem =>
               `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`,
           );
+          setMoviesSlider(upcomingMoviesArr);
           setMoviesImages(moviesImagesArray);
           setPopularMovies(popularMoviesArr);
           setPopularTV(popularTVArr);
@@ -75,6 +77,11 @@ const Home = ({navigation}) => {
             <View style={styles.sliderContainer}>
               <SliderBox
                 images={moviesImages}
+                onCurrentImagePressed={index => {
+                  navigation.navigate('Detail', {
+                    movieDetail: moviesSlider[index],
+                  });
+                }}
                 sliderBoxHeight={dimensions.height * 0.7}
                 circleLoop={true}
                 dotStyle={styles.sliderStyle}

@@ -39,3 +39,9 @@ export const getDocumentaryMovies = async () => {
   );
   return mostPopularMovies.data.results;
 };
+
+export const getMovie = async id => {
+  // const movie = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}`);
+  const movie = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}`);
+  return movie.data;
+};
