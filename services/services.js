@@ -45,3 +45,10 @@ export const getMovie = async id => {
   const movie = await axios.get(`${API_URL}/movie/${id}?api_key=${API_KEY}`);
   return movie.data;
 };
+
+export const getSimilarMovies = async id => {
+  const movies = await axios.get(
+    `${API_URL}/movie/${id}/similar?api_key=${API_KEY}`,
+  );
+  return movies.data.results;
+};

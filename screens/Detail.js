@@ -9,11 +9,14 @@ import {
   View,
   Modal,
   Pressable,
+  Button,
+  TouchableOpacity,
 } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import {getMovie} from '../services/services.js';
+import {getMovie, getSimilarMovies} from '../services/services.js';
 import PlayButton from '../components/PlayButton.js';
 import Video from '../components/Video.js';
+import List from '../components/List.js';
 
 const placeHolderImage = require('../assets/images/placeholder.png');
 const height = Dimensions.get('screen').height;
@@ -23,6 +26,7 @@ const extractYear = date => date.split('-')[0];
 const Detail = ({route, navigation}) => {
   const movieId = route.params.movieDetail.id;
   const [movieDetail, setMovieDetail] = useState(null);
+  const [similarMovies, setSimilarMovies] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -37,6 +41,9 @@ const Detail = ({route, navigation}) => {
     getMovie(movieId).then(movie => {
       setMovieDetail(movie);
       setLoaded(true);
+    });
+    getSimilarMovies(movieId).then(moviesArr => {
+      setSimilarMovies(moviesArr);
     });
   }, [movieId]);
   return (
@@ -68,7 +75,12 @@ const Detail = ({route, navigation}) => {
               <Text style={styles.movieTitle}>
                 {movieDetail.title} ({extractYear(movieDetail.release_date)})
               </Text>
-              <StarRating maxStars={5} rating={movieDetail.vote_average / 2} />
+              <StarRating
+                buttonStyle={styles.starStyle}
+                starSize={25}
+                maxStars={5}
+                rating={movieDetail.vote_average / 2}
+              />
               {movieDetail.genres && (
                 <View style={styles.genres}>
                   {movieDetail.genres.slice(0, 3).map(genre => {
@@ -77,7 +89,7 @@ const Detail = ({route, navigation}) => {
                 </View>
               )}
               <Text style={styles.country}>
-                {movieDetail.production_countries[0].name}
+                {movieDetail.production_countries[0]?.name}
               </Text>
             </View>
             <View style={styles.infoContainer}>
@@ -102,6 +114,28 @@ const Detail = ({route, navigation}) => {
             </View>
             <View style={styles.movieDescription}>
               <Text>{movieDetail.overview}</Text>
+            </View>
+            <View style={styles.container}>
+              <Text style={styles.awardsTitle}>Awards</Text>
+              <View style={styles.awardsList}>
+                <Text style={styles.award}>Top rated movie #13</Text>
+                <Text style={styles.award}>Won 4 oscars</Text>
+                <Text style={styles.award}>
+                  157 wins & 220 nominations total
+                </Text>
+              </View>
+            </View>
+            <View style={styles.container}>
+              <TouchableOpacity style={styles.reviewsButton}>
+                <Text style={styles.buttonText}>Open Reviews</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={{...styles.carousel, ...styles.carouselLast}}>
+              <List
+                navigation={navigation}
+                title="Similar Movies"
+                content={similarMovies}
+              />
             </View>
           </ScrollView>
           <Modal
@@ -182,6 +216,48 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  awardsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 5,
+    marginBottom: 5,
+  },
+  awardsList: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  award: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginVertical: 2,
+  },
+  reviewsButton: {
+    borderColor: 'black',
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '93%',
+    height: 50,
+    marginTop: 10,
+    backgroundColor: 'transparent',
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  starStyle: {
+    marginRight: 10,
+  },
+  carousel: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  carouselLast: {
+    marginBottom: 20,
   },
 });
 
