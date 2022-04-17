@@ -10,9 +10,11 @@ import {
 import {
   getPopularMovies,
   getUpcomingMovies,
-  getPopularTV,
+  // getPopularTV,
   getFamilyMovies,
   getDocumentaryMovies,
+  getComedyMovies,
+  getWarMovies,
 } from '../services/services';
 
 import {SliderBox} from 'react-native-image-slider-box';
@@ -28,7 +30,9 @@ const Home = ({navigation}) => {
   const [moviesSlider, setMoviesSlider] = useState([]);
   const [moviesImages, setMoviesImages] = useState([]);
   const [popularMovies, setPopularMovies] = useState([]);
-  const [popularTV, setPopularTV] = useState([]);
+  const [comedyMovies, setComedyMovies] = useState([]);
+  const [warMovies, setwarMovies] = useState([]);
+  // const [popularTV, setPopularTV] = useState([]);
   const [familyMovies, setFamilyMovies] = useState([]);
   const [documentaryMovies, setDocumentaryMovies] = useState([]);
 
@@ -36,9 +40,11 @@ const Home = ({navigation}) => {
     return Promise.all([
       getUpcomingMovies(),
       getPopularMovies(),
-      getPopularTV(),
+      // getPopularTV(),
       getDocumentaryMovies(),
       getFamilyMovies(),
+      getComedyMovies(),
+      getWarMovies(),
     ]);
   };
 
@@ -49,10 +55,12 @@ const Home = ({navigation}) => {
         ([
           upcomingMoviesArr,
           popularMoviesArr,
-          popularTVArr,
           documentaryMoviesArr,
           familyMoviesArr,
+          comedyMoviesArr,
+          warMoviesArr,
         ]) => {
+          // console.log(upcomingMoviesArr);
           const moviesImagesArray = upcomingMoviesArr.map(
             movieItem =>
               `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`,
@@ -60,12 +68,16 @@ const Home = ({navigation}) => {
           setMoviesSlider(upcomingMoviesArr);
           setMoviesImages(moviesImagesArray);
           setPopularMovies(popularMoviesArr);
-          setPopularTV(popularTVArr);
           setDocumentaryMovies(documentaryMoviesArr);
           setFamilyMovies(familyMoviesArr);
+          setComedyMovies(comedyMoviesArr);
+          setwarMovies(warMoviesArr);
         },
       )
-      .catch(err => setError(true))
+      .catch(err => {
+        console.log(err);
+        setError(true);
+      })
       .finally(() => setIsLoaded(true));
   }, []);
 
@@ -97,15 +109,7 @@ const Home = ({navigation}) => {
               />
             </View>
           )}
-          {popularTV.length > 0 && (
-            <View style={styles.carousel}>
-              <List
-                navigation={navigation}
-                title="Popular TV shows"
-                content={popularTV}
-              />
-            </View>
-          )}
+
           {familyMovies.length > 0 && (
             <View style={styles.carousel}>
               <List
@@ -116,11 +120,29 @@ const Home = ({navigation}) => {
             </View>
           )}
           {documentaryMovies.length > 0 && (
-            <View style={{...styles.carousel, ...styles.carouselLast}}>
+            <View style={{...styles.carousel}}>
               <List
                 navigation={navigation}
                 title="Documentary Movies"
                 content={documentaryMovies}
+              />
+            </View>
+          )}
+          {comedyMovies.length > 0 && (
+            <View style={{...styles.carousel}}>
+              <List
+                navigation={navigation}
+                title="Comedy Movies"
+                content={comedyMovies}
+              />
+            </View>
+          )}
+          {warMovies.length > 0 && (
+            <View style={{...styles.carousel, ...styles.carouselLast}}>
+              <List
+                navigation={navigation}
+                title="War Movies"
+                content={warMovies}
               />
             </View>
           )}

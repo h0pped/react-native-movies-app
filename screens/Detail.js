@@ -24,7 +24,7 @@ const height = Dimensions.get('screen').height;
 const extractYear = date => date.split('-')[0];
 
 const Detail = ({route, navigation}) => {
-  const movieId = route.params.movieDetail.id;
+  const movieId = route.params.movieDetail._id;
   const [movieDetail, setMovieDetail] = useState(null);
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loaded, setLoaded] = useState(false);
@@ -39,6 +39,8 @@ const Detail = ({route, navigation}) => {
   useEffect(() => {
     setLoaded(false);
     getMovie(movieId).then(movie => {
+      console.log(movie);
+
       setMovieDetail(movie);
       setLoaded(true);
     });
@@ -88,9 +90,7 @@ const Detail = ({route, navigation}) => {
                   })}
                 </View>
               )}
-              <Text style={styles.country}>
-                {movieDetail.production_countries[0]?.name}
-              </Text>
+              <Text style={styles.country}>{movieDetail.countries[0]}</Text>
             </View>
             <View style={styles.infoContainer}>
               <Text style={styles.infoText}>
@@ -113,7 +113,7 @@ const Detail = ({route, navigation}) => {
               </Text>
             </View>
             <View style={styles.movieDescription}>
-              <Text>{movieDetail.overview}</Text>
+              <Text>{movieDetail.description}</Text>
             </View>
             <View style={styles.container}>
               <Text style={styles.awardsTitle}>Awards</Text>
