@@ -10,7 +10,7 @@ import Search from './screens/Search';
 import Profile from './screens/Profile';
 // import {getPopularMovies} from './services/services';
 
-const Stack = createNativeStackNavigator();
+// const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const HomeStack = createNativeStackNavigator();
@@ -27,21 +27,22 @@ const HomeStackScreen = () => {
           headerShown: false,
         }}
       />
-      <Stack.Screen name="Detail" component={Detail} />
+      <HomeStack.Screen name="Detail" component={Detail} />
     </HomeStack.Navigator>
   );
 };
 const SearchStackScreen = () => {
   return (
     <SearchStack.Navigator>
-      <SearchStack.Screen name="SearchStack" component={Search} />
+      <SearchStack.Screen name="Search" component={Search} />
+      <SearchStack.Screen name="Detail" component={Detail} />
     </SearchStack.Navigator>
   );
 };
 const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator>
-      <ProfileStack.Screen name="ProfileStack" component={Profile} />
+      <ProfileStack.Screen name="Profile" component={Profile} />
     </ProfileStack.Navigator>
   );
 };

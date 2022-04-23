@@ -10,10 +10,14 @@ const propTypes = {
 };
 class Card extends React.PureComponent {
   render() {
-    const {navigation, item} = this.props;
+    const {navigation, item, shortName, mainScreen} = this.props;
     return (
       <TouchableOpacity
-        style={styles.container}
+        style={
+          mainScreen
+            ? {...styles.container, ...styles.marginMain}
+            : styles.container
+        }
         onPress={() => {
           navigation.push('Detail', {movieDetail: item});
         }}>
@@ -26,7 +30,13 @@ class Card extends React.PureComponent {
           }
           resizeMode="cover"
         />
-        <Text style={styles.text}>{item.title ? item.title : item.name}</Text>
+        <Text style={styles.text}>
+          {item.title
+            ? shortName
+              ? item.title.slice(0, 15).trim() + '...'
+              : item.title
+            : item.name}
+        </Text>
       </TouchableOpacity>
     );
   }
@@ -37,8 +47,10 @@ const styles = StyleSheet.create({
     padding: 5,
     position: 'relative',
     alignItems: 'center',
-    marginLeft: 15,
     height: 250,
+  },
+  marginMain: {
+    marginLeft: 15,
   },
   text: {
     textAlign: 'center',

@@ -20,7 +20,7 @@ class List extends React.PureComponent {
             data={content}
             horizontal={true}
             renderItem={({item}) => (
-              <Card navigation={navigation} item={item} />
+              <Card navigation={navigation} item={item} mainScreen />
             )}
             showsHorizontalScrollIndicator={false}
           />

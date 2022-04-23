@@ -50,3 +50,8 @@ export const getSimilarMovies = async id => {
   const movies = await axios.get(`${API_URL}/movies/`);
   return movies.data.movies;
 };
+export const searchMovies = async searchInput => {
+  console.log(`${API_URL}/movies/search/${searchInput}`);
+  const movies = await axios.get(`${API_URL}/movies/search/${searchInput}`);
+  return movies.data;
+};
