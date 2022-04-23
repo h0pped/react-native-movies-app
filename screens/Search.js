@@ -50,6 +50,8 @@ const Search = ({navigation}) => {
         const movies = await searchMovies(input);
         setItems(movies);
         flatListRef.current.scrollToOffset({animated: true, offset: 0});
+      } else {
+        setItems(null);
       }
     }, 500);
     return () => clearTimeout(delayDebounceFn);
@@ -84,6 +86,13 @@ const Search = ({navigation}) => {
               keyExtractor={item => item._id}
             />
           )}
+          {items && items.length === 0 && (
+            <View style={style.noItemsView}>
+              <Text style={style.textGray}>
+                No results matching your criteria
+              </Text>
+            </View>
+          )}
         </View>
       </SafeAreaView>
     </React.Fragment>
@@ -112,6 +121,14 @@ const style = StyleSheet.create({
     marginBottom: 50,
     flex: 1,
     justifyContent: 'center',
+  },
+  noItemsView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  textGray: {
+    color: '#37373b',
   },
 });
 
