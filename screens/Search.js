@@ -16,40 +16,18 @@ const Search = ({navigation}) => {
   const flatListRef = React.useRef();
   const [items, setItems] = useState(null);
   const [input, setInput] = useState('');
-  const movie = {
-    _id: '625bf2ffc7da237ebbf570e2',
-    title: 'Spider-Man: No Way Home',
-    description:
-      'Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man.',
-    poster_path: '/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg',
-    release_date: '2021-12-15',
-    vote_average: 0,
-    genres: [
-      {
-        _id: '625be0c31de7de99886d3633',
-        name: 'Action',
-        __v: 0,
-      },
-      {
-        _id: '625be0c31de7de99886d3634',
-        name: 'Adventure',
-        __v: 0,
-      },
-      {
-        _id: '625be0c31de7de99886d3641',
-        name: 'Science Fiction',
-        __v: 0,
-      },
-    ],
-    __v: 0,
-    countries: ['USA'],
-  };
+  const [error, setError] = useState(null);
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (input) {
-        const movies = await searchMovies(input);
-        setItems(movies);
-        flatListRef.current.scrollToOffset({animated: true, offset: 0});
+        try {
+          const movies = await searchMovies(input);
+          setItems(movies);
+          flatListRef.current.scrollToOffset({animated: true, offset: 0});
+        } catch (err) {
+          setError(err.message);
+        }
       } else {
         setItems(null);
       }
@@ -91,6 +69,11 @@ const Search = ({navigation}) => {
               <Text style={style.textGray}>
                 No results matching your criteria
               </Text>
+            </View>
+          )}
+          {error && (
+            <View style={style.noItemsView}>
+              <Text style={style.textGray}>{error}</Text>
             </View>
           )}
         </View>
