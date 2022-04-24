@@ -18,6 +18,7 @@ class List extends React.PureComponent {
         <View>
           <FlatList
             data={content}
+            initialNumToRender={5}
             horizontal={true}
             renderItem={({item}) => (
               <Card navigation={navigation} item={item} mainScreen />

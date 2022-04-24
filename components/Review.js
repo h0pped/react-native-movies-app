@@ -5,7 +5,7 @@ import StarRating from 'react-native-star-rating';
 class Review extends React.PureComponent {
   render() {
     const {navigation, review} = this.props;
-    const height = Dimensions.get('screen').height;
+    // const height = Dimensions.get('screen').height;
     const width = Dimensions.get('screen').width;
     const styles = StyleSheet.create({
       reviewList: {

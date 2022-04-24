@@ -31,6 +31,7 @@ const Reviews = ({route, navigation}) => {
           <FlatList
             numColumns={1}
             data={reviews}
+            initialNumToRender={5}
             contentContainerStyle={style.flatlistMargin}
             renderItem={({item}) => <Review review={item} />}
             keyExtractor={item => item._id}
