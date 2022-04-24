@@ -55,3 +55,9 @@ export const searchMovies = async searchInput => {
   const movies = await axios.get(`${API_URL}/movies/search/${searchInput}`);
   return movies.data;
 };
+
+export const getMovieReviews = async id => {
+  console.log(`${API_URL}/movies/${id}/reviews`);
+  const reviews = await axios.get(`${API_URL}/movies/${id}/reviews`);
+  return reviews.data;
+};

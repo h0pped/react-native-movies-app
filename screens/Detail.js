@@ -128,7 +128,13 @@ const Detail = ({route, navigation}) => {
               </View>
             </View>
             <View style={styles.container}>
-              <TouchableOpacity style={styles.reviewsButton}>
+              <TouchableOpacity
+                style={styles.reviewsButton}
+                onPress={() => {
+                  navigation.navigate('Reviews', {
+                    movieReviewsId: movieId,
+                  });
+                }}>
                 <Text style={styles.buttonText}>Open Reviews</Text>
               </TouchableOpacity>
             </View>

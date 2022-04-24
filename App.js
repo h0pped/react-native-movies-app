@@ -8,6 +8,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Search from './screens/Search';
 import Profile from './screens/Profile';
+import Reviews from './screens/Reviews';
 // import {getPopularMovies} from './services/services';
 
 // const Stack = createNativeStackNavigator();
@@ -28,6 +29,7 @@ const HomeStackScreen = () => {
         }}
       />
       <HomeStack.Screen name="Detail" component={Detail} />
+      <SearchStack.Screen name="Reviews" component={Reviews} />
     </HomeStack.Navigator>
   );
 };
@@ -36,6 +38,7 @@ const SearchStackScreen = () => {
     <SearchStack.Navigator>
       <SearchStack.Screen name="Search" component={Search} />
       <SearchStack.Screen name="Detail" component={Detail} />
+      <SearchStack.Screen name="Reviews" component={Reviews} />
     </SearchStack.Navigator>
   );
 };
