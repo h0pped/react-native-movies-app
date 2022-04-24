@@ -39,9 +39,11 @@ const Detail = ({route, navigation}) => {
   useEffect(() => {
     setLoaded(false);
     getMovie(movieId).then(movie => {
-      console.log(movie);
-
-      setMovieDetail(movie);
+      const m = {
+        ...movie.movie,
+        avg: movie.avg,
+      };
+      setMovieDetail(m);
       setLoaded(true);
     });
     getSimilarMovies(movieId).then(moviesArr => {
@@ -81,7 +83,7 @@ const Detail = ({route, navigation}) => {
                 buttonStyle={styles.starStyle}
                 starSize={25}
                 maxStars={5}
-                rating={movieDetail.vote_average / 2}
+                rating={movieDetail.avg}
               />
               {movieDetail.genres && (
                 <View style={styles.genres}>
