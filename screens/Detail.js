@@ -9,6 +9,7 @@ import {
   View,
   Modal,
   Pressable,
+  RefreshControl,
   Button,
   TouchableOpacity,
 } from 'react-native';
@@ -29,6 +30,25 @@ const Detail = ({route, navigation}) => {
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+
+    getMovie(movieId).then(movie => {
+      const m = {
+        ...movie.movie,
+        avg: movie.avg,
+      };
+      setMovieDetail(m);
+      setRefreshing(false);
+      console.log('movie: ', m);
+    });
+    getSimilarMovies(movieId).then(moviesArr => {
+      setSimilarMovies(moviesArr);
+    });
+  }, [movieId]);
 
   const videoShown = () => {
     setModalVisible(true);
@@ -56,7 +76,10 @@ const Detail = ({route, navigation}) => {
     <React.Fragment>
       {loaded && (
         <View>
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }>
             <Image
               resizeMode="cover"
               style={styles.image}

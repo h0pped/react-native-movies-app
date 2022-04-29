@@ -36,11 +36,14 @@ class Review extends React.PureComponent {
       },
       reviewContent: {
         marginTop: 10,
+        fontSize: 16,
       },
     });
     return (
       <View style={styles.reviewList}>
-        <Text style={styles.userName}>{review.username}</Text>
+        <Text style={styles.userName}>
+          {review.user?.name} {review.user?.surname}
+        </Text>
         <View style={styles.ratingView}>
           <StarRating
             containerStyle={styles.containerStyle}

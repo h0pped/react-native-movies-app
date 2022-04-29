@@ -8,9 +8,11 @@ import {
   TextInput,
   TouchableOpacity,
   AsyncStorage,
+  ScrollView,
+  LogBox,
 } from 'react-native';
 import Review from '../components/Review';
-import {getMovieReviews} from '../services/services';
+import {getMovieReviews, postMovieReview} from '../services/services';
 
 import StarRating from 'react-native-star-rating';
 
@@ -22,14 +24,30 @@ const Reviews = ({route, navigation}) => {
   const [reviewText, setReviewText] = useState('');
   const [reviewStars, setReviewStars] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const handleReviewSubmit = () => {
+  const handleReviewSubmit = async () => {
     console.log('review: ', {reviewText, reviewStars});
+    const review = {
+      content: reviewText,
+      vote: reviewStars,
+      user_email: await AsyncStorage.getItem('email'),
+      movie_id: movieId,
+    };
+    const reviewRes = await postMovieReview(review);
+    console.log(reviewRes);
+    if (reviewRes) {
+      setReviewText('');
+      setReviewStars(null);
+      // setReviews(reviewRes);
+      setReviews([reviewRes, ...reviews]);
+    }
   };
 
   useEffect(() => {
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
     setIsLoading(true);
     const getAuthInfo = async () => {
-      return AsyncStorage.getItem('email');
+      return await AsyncStorage.getItem('email');
     };
     getAuthInfo().then(email => {
       if (email) {
@@ -49,79 +67,85 @@ const Reviews = ({route, navigation}) => {
   }, [movieId]);
   return (
     <>
-      <View>
-        {!isLoading && reviews && reviews.length > 0 && (
-          <>
-            <View style={style.leaveRatingView}>
-              {isLoggedIn ? (
-                <>
-                  <TextInput
-                    placeholder="Leave your review"
-                    onChangeText={setReviewText}
-                    value={reviewText}
-                    style={style.textInput}
-                    numberOfLines={5}
-                    multiline
-                  />
-                  <StarRating
-                    containerStyle={style.starsContainerStyle}
-                    buttonStyle={style.starStyle}
-                    starStyle={style.starIconStyle}
-                    starSize={25}
-                    maxStars={5}
-                    rating={reviewStars}
-                    selectedStar={rating => setReviewStars(rating)}
-                  />
-                  <TouchableOpacity
-                    disabled={!reviewText || !reviewStars}
-                    onPress={handleReviewSubmit}
-                    style={style.reviewsButton}>
-                    <Text style={style.buttonText}>Leave your review!</Text>
-                  </TouchableOpacity>
-                </>
-              ) : (
-                <Text style={style.loginText}>Sign in to leave a review</Text>
-              )}
+      <ScrollView>
+        <View>
+          {!isLoading && reviews && (
+            <>
+              <View style={style.leaveRatingView}>
+                {isLoggedIn ? (
+                  <>
+                    <TextInput
+                      placeholder="Leave your review"
+                      onChangeText={setReviewText}
+                      value={reviewText}
+                      style={style.textInput}
+                      numberOfLines={5}
+                      multiline
+                    />
+                    <StarRating
+                      containerStyle={style.starsContainerStyle}
+                      buttonStyle={style.starStyle}
+                      starStyle={style.starIconStyle}
+                      starSize={25}
+                      maxStars={5}
+                      rating={reviewStars}
+                      selectedStar={rating => setReviewStars(rating)}
+                    />
+                    <TouchableOpacity
+                      disabled={!reviewText || !reviewStars}
+                      onPress={handleReviewSubmit}
+                      style={style.reviewsButton}>
+                      <Text style={style.buttonText}>Leave your review!</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <Text style={style.loginText}>Sign in to leave a review</Text>
+                )}
+              </View>
+              <Text style={style.reviewsText}>Other Reviews</Text>
+              <FlatList
+                numColumns={1}
+                data={reviews}
+                initialNumToRender={5}
+                contentContainerStyle={style.flatlistMargin}
+                renderItem={({item}) => <Review review={item} />}
+                keyExtractor={item => item._id}
+              />
+            </>
+          )}
+          {!isLoading && (!reviews || reviews.length === 0) && (
+            <View style={style.noReviewsView}>
+              <Text style={style.noReviewsText}>
+                Unfortunately, there are no reviews for that movie
+              </Text>
             </View>
-            <Text style={style.reviewsText}>Other Reviews</Text>
-            <FlatList
-              numColumns={1}
-              data={reviews}
-              initialNumToRender={5}
-              contentContainerStyle={style.flatlistMargin}
-              renderItem={({item}) => <Review review={item} />}
-              keyExtractor={item => item._id}
-            />
-          </>
-        )}
-        {!isLoading && (!reviews || reviews.length === 0) && (
-          <View style={style.noReviewsView}>
-            <Text style={style.noReviewsText}>
-              Unfortunately, there are no reviews for that movie
-            </Text>
-          </View>
-        )}
-        {isError && (
-          <View style={style.noReviewsView}>
-            <Text style={style.noReviewsText}>Some error occured.</Text>
-          </View>
-        )}
-        {isLoading && <ActivityIndicator size="large" />}
-      </View>
+          )}
+          {isError && (
+            <View style={style.noReviewsView}>
+              <Text style={style.noReviewsText}>Some error occured.</Text>
+            </View>
+          )}
+          {isLoading && <ActivityIndicator size="large" />}
+        </View>
+      </ScrollView>
     </>
   );
 };
 const style = StyleSheet.create({
-  flatlistMargin: {
-    paddingBottom: 50,
-  },
   itemsContainer: {
     marginBottom: 100,
   },
+  loginText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 20,
+    marginTop: 20,
+    marginBottom: -20,
+  },
   flatlist: {
     marginBottom: 50,
-    flex: 1,
-    justifyContent: 'center',
+    // flex: 1,
+    // justifyContent: 'center',
   },
   noReviewsView: {
     paddingVertical: 30,
@@ -168,6 +192,7 @@ const style = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 25,
     marginTop: 30,
+    marginBottom: 30,
   },
 });
 

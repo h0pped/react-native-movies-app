@@ -61,3 +61,8 @@ export const getMovieReviews = async id => {
   const reviews = await axios.get(`${API_URL}/movies/${id}/reviews`);
   return reviews.data;
 };
+
+export const postMovieReview = async review => {
+  const postedReview = await axios.post(`${API_URL}/reviews`, review);
+  return postedReview.data;
+};
