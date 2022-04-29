@@ -5,14 +5,25 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
+  TextInput,
+  TouchableOpacity,
 } from 'react-native';
 import Review from '../components/Review';
 import {getMovieReviews} from '../services/services';
+
+import StarRating from 'react-native-star-rating';
+
 const Reviews = ({route, navigation}) => {
   const movieId = route.params.movieReviewsId;
   const [reviews, setReviews] = useState(null);
   const [isLoading, setIsLoading] = useState(null);
   const [isError, setIsError] = useState(false);
+  const [reviewText, setReviewText] = useState('');
+  const [reviewStars, setReviewStars] = useState(null);
+
+  const handleReviewSubmit = () => {
+    console.log('review: ', {reviewText, reviewStars});
+  };
   useEffect(() => {
     setIsLoading(true);
     getMovieReviews(movieId)
@@ -27,15 +38,43 @@ const Reviews = ({route, navigation}) => {
   return (
     <>
       <View>
-        {!isLoading && reviews && reviews.length > 0 && (
-          <FlatList
-            numColumns={1}
-            data={reviews}
-            initialNumToRender={5}
-            contentContainerStyle={style.flatlistMargin}
-            renderItem={({item}) => <Review review={item} />}
-            keyExtractor={item => item._id}
+        <View style={style.leaveRatingView}>
+          <TextInput
+            placeholder="Leave your review"
+            onChangeText={setReviewText}
+            value={reviewText}
+            style={style.textInput}
+            numberOfLines={5}
+            multiline
           />
+          <StarRating
+            containerStyle={style.starsContainerStyle}
+            buttonStyle={style.starStyle}
+            starStyle={style.starIconStyle}
+            starSize={25}
+            maxStars={5}
+            rating={reviewStars}
+            selectedStar={rating => setReviewStars(rating)}
+          />
+          <TouchableOpacity
+            disabled={!reviewText || !reviewStars}
+            onPress={handleReviewSubmit}
+            style={style.reviewsButton}>
+            <Text style={style.buttonText}>Leave your review!</Text>
+          </TouchableOpacity>
+        </View>
+        {!isLoading && reviews && reviews.length > 0 && (
+          <>
+            <Text style={style.reviewsText}>Other Reviews</Text>
+            <FlatList
+              numColumns={1}
+              data={reviews}
+              initialNumToRender={5}
+              contentContainerStyle={style.flatlistMargin}
+              renderItem={({item}) => <Review review={item} />}
+              keyExtractor={item => item._id}
+            />
+          </>
         )}
         {!isLoading && (!reviews || reviews.length === 0) && (
           <View style={style.noReviewsView}>
@@ -56,7 +95,6 @@ const Reviews = ({route, navigation}) => {
 };
 const style = StyleSheet.create({
   flatlistMargin: {
-    marginTop: 15,
     paddingBottom: 50,
   },
   itemsContainer: {
@@ -74,6 +112,44 @@ const style = StyleSheet.create({
   },
   noReviewsText: {
     fontSize: 16,
+  },
+  textInput: {
+    margin: 15,
+    borderColor: 'transparent',
+    borderRadius: 10,
+    backgroundColor: 'rgba(118, 118, 128, 0.12)',
+    padding: 10,
+    borderWidth: 1,
+    fontSize: 17,
+  },
+  starStyle: {
+    width: 50,
+  },
+  starsContainerStyle: {
+    marginTop: 5,
+    alignSelf: 'center',
+  },
+  reviewsButton: {
+    borderColor: 'black',
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '93%',
+    height: 50,
+    marginTop: 10,
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+    borderRadius: 10,
+  },
+  buttonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  reviewsText: {
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 25,
+    marginTop: 30,
   },
 });
 
