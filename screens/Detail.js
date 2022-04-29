@@ -36,8 +36,10 @@ const Detail = ({route, navigation}) => {
   const videoHidden = () => {
     setModalVisible(false);
   };
+
   useEffect(() => {
     setLoaded(false);
+
     getMovie(movieId).then(movie => {
       const m = {
         ...movie.movie,

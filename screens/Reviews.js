@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   TextInput,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 import Review from '../components/Review';
 import {getMovieReviews} from '../services/services';
@@ -16,16 +17,27 @@ import StarRating from 'react-native-star-rating';
 const Reviews = ({route, navigation}) => {
   const movieId = route.params.movieReviewsId;
   const [reviews, setReviews] = useState(null);
-  const [isLoading, setIsLoading] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [reviewText, setReviewText] = useState('');
   const [reviewStars, setReviewStars] = useState(null);
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handleReviewSubmit = () => {
     console.log('review: ', {reviewText, reviewStars});
   };
+
   useEffect(() => {
     setIsLoading(true);
+    const getAuthInfo = async () => {
+      return AsyncStorage.getItem('email');
+    };
+    getAuthInfo().then(email => {
+      if (email) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
     getMovieReviews(movieId)
       .then(res => {
         setReviews(res.reviews);
@@ -38,33 +50,39 @@ const Reviews = ({route, navigation}) => {
   return (
     <>
       <View>
-        <View style={style.leaveRatingView}>
-          <TextInput
-            placeholder="Leave your review"
-            onChangeText={setReviewText}
-            value={reviewText}
-            style={style.textInput}
-            numberOfLines={5}
-            multiline
-          />
-          <StarRating
-            containerStyle={style.starsContainerStyle}
-            buttonStyle={style.starStyle}
-            starStyle={style.starIconStyle}
-            starSize={25}
-            maxStars={5}
-            rating={reviewStars}
-            selectedStar={rating => setReviewStars(rating)}
-          />
-          <TouchableOpacity
-            disabled={!reviewText || !reviewStars}
-            onPress={handleReviewSubmit}
-            style={style.reviewsButton}>
-            <Text style={style.buttonText}>Leave your review!</Text>
-          </TouchableOpacity>
-        </View>
         {!isLoading && reviews && reviews.length > 0 && (
           <>
+            <View style={style.leaveRatingView}>
+              {isLoggedIn ? (
+                <>
+                  <TextInput
+                    placeholder="Leave your review"
+                    onChangeText={setReviewText}
+                    value={reviewText}
+                    style={style.textInput}
+                    numberOfLines={5}
+                    multiline
+                  />
+                  <StarRating
+                    containerStyle={style.starsContainerStyle}
+                    buttonStyle={style.starStyle}
+                    starStyle={style.starIconStyle}
+                    starSize={25}
+                    maxStars={5}
+                    rating={reviewStars}
+                    selectedStar={rating => setReviewStars(rating)}
+                  />
+                  <TouchableOpacity
+                    disabled={!reviewText || !reviewStars}
+                    onPress={handleReviewSubmit}
+                    style={style.reviewsButton}>
+                    <Text style={style.buttonText}>Leave your review!</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <Text style={style.loginText}>Sign in to leave a review</Text>
+              )}
+            </View>
             <Text style={style.reviewsText}>Other Reviews</Text>
             <FlatList
               numColumns={1}
