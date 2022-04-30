@@ -27,7 +27,7 @@ const Reviews = ({route, navigation}) => {
   const handleReviewSubmit = async () => {
     console.log('review: ', {reviewText, reviewStars});
     const review = {
-      content: reviewText,
+      content: reviewText.trim(),
       vote: reviewStars,
       user_email: await AsyncStorage.getItem('email'),
       movie_id: movieId,
