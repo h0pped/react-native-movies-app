@@ -8,6 +8,12 @@ import {
   TouchableOpacity,
   AsyncStorage,
 } from 'react-native';
+import Dialog, {
+  DialogContent,
+  DialogButton,
+  DialogTitle,
+  DialogFooter,
+} from 'react-native-popup-dialog';
 
 import {signIn} from '../services/services';
 const SignIn = ({navigation}) => {
@@ -29,6 +35,12 @@ const SignIn = ({navigation}) => {
       password: e,
     }));
   };
+  const clearInputPassword = () => {
+    setInput(prevState => ({
+      ...prevState,
+      password: '',
+    }));
+  };
   const handleSignIn = async () => {
     try {
       const res = await signIn(input);
@@ -42,6 +54,42 @@ const SignIn = ({navigation}) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+      <Dialog
+        visible={isError}
+        onTouchOutside={() => {
+          setIsError(false);
+          clearInputPassword();
+        }}
+        dialogTitle={
+          <DialogTitle
+            title="Wrong credentials!"
+            style={{
+              backgroundColor: '#F7F7F8',
+            }}
+            hasTitleBar={false}
+            align="center"
+          />
+        }
+        footer={
+          <DialogFooter>
+            <DialogButton
+              text="OK"
+              bordered
+              onPress={() => {
+                setIsError(false);
+                clearInputPassword();
+              }}
+              key="button-1"
+            />
+          </DialogFooter>
+        }>
+        <DialogContent>
+          <Text style={{textAlign: 'center', marginTop: 15}}>
+            Email or Password is wrong. Please try again with another
+            credentials
+          </Text>
+        </DialogContent>
+      </Dialog>
       <View style={styles.inputContainer}>
         <Text style={styles.labelText}>Email</Text>
         <TextInput
