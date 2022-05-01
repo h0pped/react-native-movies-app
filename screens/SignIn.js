@@ -63,9 +63,7 @@ const SignIn = ({navigation}) => {
         dialogTitle={
           <DialogTitle
             title="Wrong credentials!"
-            style={{
-              backgroundColor: '#F7F7F8',
-            }}
+            style={styles.dialogTitle}
             hasTitleBar={false}
             align="center"
           />
@@ -84,7 +82,7 @@ const SignIn = ({navigation}) => {
           </DialogFooter>
         }>
         <DialogContent>
-          <Text style={{textAlign: 'center', marginTop: 15}}>
+          <Text style={styles.popupText}>
             Email or Password is wrong. Please try again with another
             credentials
           </Text>
@@ -123,6 +121,14 @@ const SignIn = ({navigation}) => {
   );
 };
 const styles = StyleSheet.create({
+  dialogTitle: {
+    backgroundColor: '#F7F7F8',
+  },
+  popupText: {
+    textAlign: 'center',
+    marginTop: 15,
+  },
+
   container: {
     flex: 1,
     justifyContent: 'center',

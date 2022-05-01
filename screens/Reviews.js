@@ -10,6 +10,7 @@ import {
   AsyncStorage,
   ScrollView,
   LogBox,
+  RefreshControl,
 } from 'react-native';
 import Review from '../components/Review';
 import {getMovieReviews, postMovieReview} from '../services/services';
@@ -24,6 +25,8 @@ const Reviews = ({route, navigation}) => {
   const [reviewText, setReviewText] = useState('');
   const [reviewStars, setReviewStars] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
   const handleReviewSubmit = async () => {
     const review = {
       content: reviewText.trim(),
@@ -40,9 +43,32 @@ const Reviews = ({route, navigation}) => {
     }
   };
 
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    setIsLoading(true);
+    const getAuthInfo = async () => {
+      return await AsyncStorage.getItem('email');
+    };
+    getAuthInfo().then(email => {
+      if (email) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+    getMovieReviews(movieId)
+      .then(res => {
+        setReviews(res.reviews);
+        setIsLoading(false);
+        setRefreshing(false);
+      })
+      .catch(() => {
+        setIsError(true);
+      });
+  }, [movieId]);
   useEffect(() => {
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-
     setIsLoading(true);
     const getAuthInfo = async () => {
       return await AsyncStorage.getItem('email');
@@ -65,7 +91,10 @@ const Reviews = ({route, navigation}) => {
   }, [movieId]);
   return (
     <>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <View>
           {!isLoading && reviews && (
             <>
