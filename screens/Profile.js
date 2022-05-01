@@ -10,6 +10,7 @@ const Profile = ({route, navigation}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const getAuthInfo = async () => {
+    // return await AsyncStorage.removeItem('email');
     return await AsyncStorage.getItem('email');
   };
   useEffect(() => {
@@ -41,9 +42,7 @@ const Profile = ({route, navigation}) => {
       {isLoggedIn && <Text>Profile</Text>}
       {!isLoggedIn && (
         <View style={styles.authView}>
-          <Text style={styles.authText}>
-            You need to Sign In to see your profile
-          </Text>
+          <Text style={styles.authText}>Welcome!</Text>
           <TouchableOpacity
             style={styles.authButton}
             onPress={() => {

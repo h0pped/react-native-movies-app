@@ -24,7 +24,10 @@ const Search = ({navigation}) => {
         try {
           const movies = await searchMovies(input);
           setItems(movies);
-          flatListRef.current.scrollToOffset({animated: true, offset: 0});
+          console.log(movies);
+          if (movies.length > 0) {
+            flatListRef.current.scrollToOffset({animated: true, offset: 0});
+          }
         } catch (err) {
           setError(err.message);
         }

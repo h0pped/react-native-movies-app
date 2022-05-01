@@ -71,3 +71,7 @@ export const signIn = async credentials => {
   const user = await axios.post(`${API_URL}/users/auth`, credentials);
   return user.data;
 };
+export const signUp = async userData => {
+  const user = await axios.post(`${API_URL}/users/`, userData);
+  return user.data;
+};

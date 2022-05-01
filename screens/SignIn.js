@@ -117,10 +117,25 @@ const SignIn = ({navigation}) => {
           <Text style={styles.buttonText}>Sign in</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.dontHaveAccountView}>
+        <Text>Don't have any account? </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Sign up');
+          }}>
+          <Text style={styles.boldText}>Sign up!</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
+  dontHaveAccountView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
   dialogTitle: {
     backgroundColor: '#F7F7F8',
   },
@@ -128,7 +143,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 15,
   },
+  boldText: {
+    fontWeight: 'bold',
+  },
+  dontHaveAccountText: {
+    textAlign: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 
+  linkTouch: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
