@@ -9,6 +9,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Search from './screens/Search';
 import Profile from './screens/Profile';
 import Reviews from './screens/Reviews';
+import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
 // import {getPopularMovies} from './services/services';
 
 // const Stack = createNativeStackNavigator();
@@ -46,6 +48,8 @@ const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator>
       <ProfileStack.Screen name="Profile" component={Profile} />
+      <ProfileStack.Screen name="Sign in" component={SignIn} />
+      <ProfileStack.Screen name="Sign up" component={SignUp} />
     </ProfileStack.Navigator>
   );
 };

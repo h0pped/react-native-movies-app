@@ -66,3 +66,8 @@ export const postMovieReview = async review => {
   const postedReview = await axios.post(`${API_URL}/reviews`, review);
   return postedReview.data;
 };
+
+export const signIn = async credentials => {
+  const user = await axios.post(`${API_URL}/users/auth`, credentials);
+  return user.data;
+};

@@ -25,7 +25,6 @@ const Reviews = ({route, navigation}) => {
   const [reviewStars, setReviewStars] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const handleReviewSubmit = async () => {
-    console.log('review: ', {reviewText, reviewStars});
     const review = {
       content: reviewText.trim(),
       vote: reviewStars,
@@ -37,7 +36,6 @@ const Reviews = ({route, navigation}) => {
     if (reviewRes) {
       setReviewText('');
       setReviewStars(null);
-      // setReviews(reviewRes);
       setReviews([reviewRes, ...reviews]);
     }
   };
