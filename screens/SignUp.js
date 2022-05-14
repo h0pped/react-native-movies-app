@@ -50,7 +50,6 @@ const SignUp = ({navigation}) => {
       const res = await signUp(input);
       AsyncStorage.setItem('email', res.user.email);
       setIsError(false);
-      console.log('SIGN UP', res);
       navigation.navigate('Profile');
     } catch (err) {
       setIsError(true);
@@ -108,12 +107,30 @@ const SignUp = ({navigation}) => {
           <Text style={styles.buttonText}>Sign up</Text>
         </TouchableOpacity>
       </View>
+      <View style={styles.dontHaveAccountView}>
+        <Text>Already have account? </Text>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('Sign in');
+          }}>
+          <Text style={styles.boldText}>Sign in!</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
   dialogTitle: {
     backgroundColor: '#F7F7F8',
+  },
+  dontHaveAccountView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  boldText: {
+    fontWeight: 'bold',
   },
   popupText: {
     textAlign: 'center',

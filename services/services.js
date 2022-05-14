@@ -75,3 +75,12 @@ export const signUp = async userData => {
   const user = await axios.post(`${API_URL}/users/`, userData);
   return user.data;
 };
+export const getAccountInfo = async email => {
+  const user = await axios.get(`${API_URL}/users/getByEmail/${email}`);
+  return user.data;
+};
+
+export const getUserLists = async email => {
+  const lists = await axios.get(`${API_URL}/lists/${email}`);
+  return lists.data;
+};

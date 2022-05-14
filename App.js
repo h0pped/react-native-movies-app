@@ -50,6 +50,7 @@ const ProfileStackScreen = () => {
       <ProfileStack.Screen name="Profile" component={Profile} />
       <ProfileStack.Screen name="Sign in" component={SignIn} />
       <ProfileStack.Screen name="Sign up" component={SignUp} />
+      <ProfileStack.Screen name="Detail" component={Detail} />
     </ProfileStack.Navigator>
   );
 };
