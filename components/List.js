@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, FlatList, StyleSheet} from 'react-native';
+import {View, Text, FlatList, StyleSheet, TouchableOpacity} from 'react-native';
 import Card from '../components/Card';
 import PropTypes from 'prop-types';
 
@@ -9,11 +9,28 @@ const propTypes = {
 };
 class List extends React.PureComponent {
   render() {
-    const {navigation, title, content} = this.props;
+    const {
+      navigation,
+      title,
+      content,
+      ownList,
+      removeList,
+      ownListId,
+      ownhandleRemoveMovieFromList,
+    } = this.props;
     return (
       <View style={styles.list}>
-        <View>
+        <View style={styles.titleView}>
           <Text style={styles.text}>{title}</Text>
+          {ownList && (
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => {
+                removeList(ownListId);
+              }}>
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.flatList}>
           {content.length > 0 ? (
@@ -22,7 +39,14 @@ class List extends React.PureComponent {
               initialNumToRender={5}
               horizontal={true}
               renderItem={({item}) => (
-                <Card navigation={navigation} item={item} mainScreen />
+                <Card
+                  navigation={navigation}
+                  item={item}
+                  mainScreen
+                  ownListCard={ownList}
+                  deleteMovieFromList={ownhandleRemoveMovieFromList}
+                  ownListId={ownListId}
+                />
               )}
               showsHorizontalScrollIndicator={false}
             />
@@ -36,6 +60,23 @@ class List extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  deleteButton: {
+    borderColor: 'black',
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+    alignSelf: 'center',
+    borderRadius: 10,
+    padding: 5,
+  },
+  titleView: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginRight: 10,
+  },
   noMoviesText: {
     fontSize: 18,
     color: 'gray',

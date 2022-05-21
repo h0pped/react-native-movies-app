@@ -10,7 +10,13 @@ import {
   TextInput,
 } from 'react-native';
 import List from '../components/List.js';
-import {getAccountInfo, getUserLists} from '../services/services';
+import {
+  getAccountInfo,
+  getUserLists,
+  createNewList,
+  removeList,
+  removeMovieFromList,
+} from '../services/services';
 const Profile = ({route, navigation}) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [accountInfo, setAccountInfo] = useState(null);
@@ -26,7 +32,39 @@ const Profile = ({route, navigation}) => {
     return await getUserLists(email);
   };
   const handleNewList = async () => {
-    console.log(newList);
+    if (newList.length > 0) {
+      const res = await createNewList(accountInfo.email, newList);
+      if (res) {
+        setLists(prevLists => [res, ...prevLists]);
+        setNewList('');
+      }
+    }
+  };
+  const handleRemoveMovieFromList = async (listId, movieId) => {
+    const res = await removeMovieFromList(listId, movieId);
+    if (res) {
+      const changedList = lists.find(list => list._id === listId);
+      console.log('BEFORE ', changedList.movies);
+      changedList.movies = changedList.movies.filter(
+        movie => movie._id !== movieId,
+      );
+      console.log('AFTER ', changedList.movies);
+
+      setLists(prevLists =>
+        prevLists.map(list => {
+          if (list._id === listId) {
+            return changedList;
+          }
+          return list;
+        }),
+      );
+    }
+  };
+  const handleRemoveList = async listId => {
+    const res = await removeList(listId);
+    if (res) {
+      setLists(prevLists => prevLists.filter(list => list._id !== listId));
+    }
   };
   useEffect(() => {
     getAuthInfo().then(email => {
@@ -113,6 +151,10 @@ const Profile = ({route, navigation}) => {
                   navigation={navigation}
                   title={list.title}
                   content={list.movies}
+                  ownList
+                  removeList={handleRemoveList}
+                  ownListId={list._id}
+                  ownhandleRemoveMovieFromList={handleRemoveMovieFromList}
                 />
               </View>
             ))}
@@ -177,8 +219,8 @@ const styles = StyleSheet.create({
   authView: {
     flex: 1,
     flexDirection: 'column',
-    // justifyContent: 'center',
-    // alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
     width: '100%',
     padding: 10,
   },

@@ -84,3 +84,18 @@ export const getUserLists = async email => {
   const lists = await axios.get(`${API_URL}/lists/${email}`);
   return lists.data;
 };
+export const createNewList = async (email, title) => {
+  const list = await axios.post(`${API_URL}/lists/${email}`, {title});
+  return list.data;
+};
+
+export const removeList = async listId => {
+  const list = await axios.delete(`${API_URL}/lists/${listId}`);
+  return list.data;
+};
+
+export const removeMovieFromList = async (listId, movieId) => {
+  console.log(`${API_URL}/lists/${listId}/${movieId}`);
+  const list = await axios.delete(`${API_URL}/lists/${listId}/${movieId}`);
+  return list.data;
+};
