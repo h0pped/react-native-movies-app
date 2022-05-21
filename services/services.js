@@ -81,8 +81,12 @@ export const getAccountInfo = async email => {
 };
 
 export const getUserLists = async email => {
-  const lists = await axios.get(`${API_URL}/lists/${email}`);
-  return lists.data;
+  if (email) {
+    const lists = await axios.get(`${API_URL}/lists/${email}`);
+    return lists.data;
+  } else {
+    return [];
+  }
 };
 export const createNewList = async (email, title) => {
   const list = await axios.post(`${API_URL}/lists/${email}`, {title});
@@ -97,5 +101,9 @@ export const removeList = async listId => {
 export const removeMovieFromList = async (listId, movieId) => {
   console.log(`${API_URL}/lists/${listId}/${movieId}`);
   const list = await axios.delete(`${API_URL}/lists/${listId}/${movieId}`);
+  return list.data;
+};
+export const addMovieToList = async (listId, movieId) => {
+  const list = await axios.post(`${API_URL}/lists/${listId}/add`, {movieId});
   return list.data;
 };

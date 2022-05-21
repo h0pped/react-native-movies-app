@@ -17,6 +17,9 @@ class List extends React.PureComponent {
       removeList,
       ownListId,
       ownhandleRemoveMovieFromList,
+      isLoggedIn,
+      userLists,
+      addMovieToList,
     } = this.props;
     return (
       <View style={styles.list}>
@@ -46,6 +49,9 @@ class List extends React.PureComponent {
                   ownListCard={ownList}
                   deleteMovieFromList={ownhandleRemoveMovieFromList}
                   ownListId={ownListId}
+                  isLoggedIn={isLoggedIn}
+                  userLists={userLists}
+                  addMovieToList={addMovieToList}
                 />
               )}
               showsHorizontalScrollIndicator={false}

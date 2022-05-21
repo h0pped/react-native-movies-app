@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
     width: '100%',
     padding: 10,
   },
@@ -228,9 +227,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
     marginBottom: 20,
+    textAlign: 'center',
   },
   orText: {
     marginVertical: 15,
+    textAlign: 'center',
   },
   authButton: {
     borderColor: 'black',

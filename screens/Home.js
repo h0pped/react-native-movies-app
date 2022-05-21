@@ -6,6 +6,7 @@ import {
   Dimensions,
   ScrollView,
   ActivityIndicator,
+  AsyncStorage,
 } from 'react-native';
 import {
   getPopularMovies,
@@ -15,6 +16,8 @@ import {
   getDocumentaryMovies,
   getComedyMovies,
   getWarMovies,
+  getUserLists,
+  addMovieToList,
 } from '../services/services';
 
 import {SliderBox} from 'react-native-image-slider-box';
@@ -35,8 +38,33 @@ const Home = ({navigation}) => {
   // const [popularTV, setPopularTV] = useState([]);
   const [familyMovies, setFamilyMovies] = useState([]);
   const [documentaryMovies, setDocumentaryMovies] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userLists, setUserLists] = useState([]);
 
-  const getData = () => {
+  const addMovieToListHandler = async (listId, movieId) => {
+    const list = await addMovieToList(listId, movieId);
+    if (list) {
+      alert('Movie added to list');
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getAuthInfo().then(data => {
+        if (data) {
+          setIsLoggedIn(true);
+          getUserLists(data).then(lists => {
+            setUserLists(lists);
+          });
+        } else {
+          setIsLoggedIn(false);
+        }
+      });
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const getData = userEmail => {
     return Promise.all([
       getUpcomingMovies(),
       getPopularMovies(),
@@ -45,35 +73,45 @@ const Home = ({navigation}) => {
       getFamilyMovies(),
       getComedyMovies(),
       getWarMovies(),
+      getUserLists(userEmail),
     ]);
   };
-
+  const getAuthInfo = async () => {
+    return await AsyncStorage.getItem('email');
+  };
   useEffect(() => {
     setIsLoaded(false);
-    getData()
-      .then(
-        ([
-          upcomingMoviesArr,
-          popularMoviesArr,
-          documentaryMoviesArr,
-          familyMoviesArr,
-          comedyMoviesArr,
-          warMoviesArr,
-        ]) => {
-          // console.log(upcomingMoviesArr);
-          const moviesImagesArray = upcomingMoviesArr.map(
-            movieItem =>
-              `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`,
-          );
-          setMoviesSlider(upcomingMoviesArr);
-          setMoviesImages(moviesImagesArray);
-          setPopularMovies(popularMoviesArr);
-          setDocumentaryMovies(documentaryMoviesArr);
-          setFamilyMovies(familyMoviesArr);
-          setComedyMovies(comedyMoviesArr);
-          setwarMovies(warMoviesArr);
-        },
-      )
+    getAuthInfo()
+      .then(email => {
+        if (email) {
+          setIsLoggedIn(true);
+        }
+        getData(email).then(
+          ([
+            upcomingMoviesArr,
+            popularMoviesArr,
+            documentaryMoviesArr,
+            familyMoviesArr,
+            comedyMoviesArr,
+            warMoviesArr,
+            userListsArr,
+          ]) => {
+            // console.log(upcomingMoviesArr);
+            const moviesImagesArray = upcomingMoviesArr.map(
+              movieItem =>
+                `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`,
+            );
+            setMoviesSlider(upcomingMoviesArr);
+            setMoviesImages(moviesImagesArray);
+            setPopularMovies(popularMoviesArr);
+            setDocumentaryMovies(documentaryMoviesArr);
+            setFamilyMovies(familyMoviesArr);
+            setComedyMovies(comedyMoviesArr);
+            setwarMovies(warMoviesArr);
+            setUserLists(userListsArr);
+          },
+        );
+      })
       .catch(err => {
         console.log(err);
         setError(true);
@@ -106,6 +144,9 @@ const Home = ({navigation}) => {
                 navigation={navigation}
                 title="Popular Movies"
                 content={popularMovies}
+                isLoggedIn={isLoggedIn}
+                userLists={userLists}
+                addMovieToList={addMovieToListHandler}
               />
             </View>
           )}
@@ -116,6 +157,9 @@ const Home = ({navigation}) => {
                 navigation={navigation}
                 title="Family Movies"
                 content={familyMovies}
+                isLoggedIn={isLoggedIn}
+                userLists={userLists}
+                addMovieToList={addMovieToListHandler}
               />
             </View>
           )}
@@ -125,6 +169,9 @@ const Home = ({navigation}) => {
                 navigation={navigation}
                 title="Documentary Movies"
                 content={documentaryMovies}
+                isLoggedIn={isLoggedIn}
+                userLists={userLists}
+                addMovieToList={addMovieToListHandler}
               />
             </View>
           )}
@@ -134,6 +181,9 @@ const Home = ({navigation}) => {
                 navigation={navigation}
                 title="Comedy Movies"
                 content={comedyMovies}
+                isLoggedIn={isLoggedIn}
+                userLists={userLists}
+                addMovieToList={addMovieToListHandler}
               />
             </View>
           )}
@@ -143,6 +193,9 @@ const Home = ({navigation}) => {
                 navigation={navigation}
                 title="War Movies"
                 content={warMovies}
+                isLoggedIn={isLoggedIn}
+                userLists={userLists}
+                addMovieToList={addMovieToListHandler}
               />
             </View>
           )}

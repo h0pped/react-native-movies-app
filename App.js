@@ -11,6 +11,7 @@ import Profile from './screens/Profile';
 import Reviews from './screens/Reviews';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
+import {MenuProvider} from 'react-native-popup-menu';
 // import {getPopularMovies} from './services/services';
 
 // const Stack = createNativeStackNavigator();
@@ -56,29 +57,31 @@ const ProfileStackScreen = () => {
 };
 const App = () => {
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarIcon: ({focused, color, size}) => {
-            let iconName;
-            if (route.name === 'Home') {
-              iconName = focused ? 'ios-home' : 'ios-home-outline';
-            } else if (route.name === 'Search') {
-              iconName = focused ? 'ios-search' : 'ios-search';
-            } else if (route.name === 'Profile') {
-              iconName = focused ? 'person' : 'person-outline';
-            }
-            return <Icon name={iconName} size={size} color={color} />;
-          },
-          headerShown: false,
-          activeTintColor: 'blue',
-          inactiveTintColor: 'gray',
-        })}>
-        <Tab.Screen name="Home" component={HomeStackScreen} />
-        <Tab.Screen name="Search" component={SearchStackScreen} />
-        <Tab.Screen name="Profile" component={ProfileStackScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <MenuProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({route}) => ({
+            tabBarIcon: ({focused, color, size}) => {
+              let iconName;
+              if (route.name === 'Home') {
+                iconName = focused ? 'ios-home' : 'ios-home-outline';
+              } else if (route.name === 'Search') {
+                iconName = focused ? 'ios-search' : 'ios-search';
+              } else if (route.name === 'Profile') {
+                iconName = focused ? 'person' : 'person-outline';
+              }
+              return <Icon name={iconName} size={size} color={color} />;
+            },
+            headerShown: false,
+            activeTintColor: 'blue',
+            inactiveTintColor: 'gray',
+          })}>
+          <Tab.Screen name="Home" component={HomeStackScreen} />
+          <Tab.Screen name="Search" component={SearchStackScreen} />
+          <Tab.Screen name="Profile" component={ProfileStackScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </MenuProvider>
   );
 };
 // const styles = StyleSheet.create({

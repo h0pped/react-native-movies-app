@@ -1,6 +1,12 @@
 import React from 'react';
 
 import {TouchableOpacity, StyleSheet, Image, Text, View} from 'react-native';
+import {
+  Menu,
+  MenuTrigger,
+  MenuOptions,
+  MenuOption,
+} from 'react-native-popup-menu';
 import PropTypes from 'prop-types';
 const placeHolderImage = require('../assets/images/placeholder.png');
 
@@ -17,7 +23,10 @@ class Card extends React.PureComponent {
       mainScreen,
       ownListCard,
       deleteMovieFromList,
+      addMovieToList,
       ownListId,
+      isLoggedIn,
+      userLists,
     } = this.props;
     return (
       <View style={styles.cardView}>
@@ -29,6 +38,37 @@ class Card extends React.PureComponent {
             }}>
             <Text style={styles.deleteText}>-</Text>
           </TouchableOpacity>
+        )}
+        {!ownListCard && isLoggedIn && (
+          <Menu style={styles.menu}>
+            <MenuTrigger style={styles.menuTrigger}>
+              <View style={styles.deleteButtonOpacity}>
+                <Text style={styles.deleteText}>+</Text>
+              </View>
+            </MenuTrigger>
+            <MenuOptions style={styles.menuOptions}>
+              {userLists &&
+                userLists.length > 0 &&
+                userLists.map(list => {
+                  return (
+                    <MenuOption
+                      key={list._id}
+                      onSelect={() => {
+                        addMovieToList(list._id, item._id);
+                      }}>
+                      <Text style={styles.menuText}>{list.title}</Text>
+                    </MenuOption>
+                  );
+                })}
+              {userLists && userLists.length === 0 && (
+                <MenuOption disabled>
+                  <Text style={{...styles.menuText, ...styles.menuGrayText}}>
+                    No Lists
+                  </Text>
+                </MenuOption>
+              )}
+            </MenuOptions>
+          </Menu>
         )}
         <TouchableOpacity
           style={
@@ -62,11 +102,34 @@ class Card extends React.PureComponent {
 }
 
 const styles = StyleSheet.create({
+  menu: {
+    zIndex: 999,
+    marginLeft: 10,
+  },
+  menuTrigger: {
+    zIndex: 1000,
+  },
+  menuOptions: {
+    borderRadius: 80,
+
+    fontSize: 20,
+  },
+  menuOption: {
+    fontSize: 20,
+  },
+  menuText: {
+    fontSize: 16,
+    padding: 10,
+  },
+  menuGrayText: {
+    color: 'gray',
+  },
   deleteText: {
     fontWeight: 'bold',
   },
   cardView: {
     position: 'relative',
+    marginRight: 10,
   },
   deleteButtonOpacity: {
     position: 'absolute',
