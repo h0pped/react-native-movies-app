@@ -28,6 +28,10 @@ const Profile = ({route, navigation}) => {
     // return await AsyncStorage.removeItem('email');
     return await AsyncStorage.getItem('email');
   };
+  const logOutHandler = async () => {
+    await AsyncStorage.removeItem('email');
+    setIsLoggedIn(false);
+  };
   const getLists = async email => {
     return await getUserLists(email);
   };
@@ -141,7 +145,7 @@ const Profile = ({route, navigation}) => {
               // onPress={handleReviewSubmit}
               onPress={handleNewList}
               style={styles.reviewsButton}>
-              <Text style={styles.buttonText}>Create new list!</Text>
+              <Text style={styles.buttonText}>Add new list</Text>
             </TouchableOpacity>
           </View>
           {lists &&
@@ -158,6 +162,13 @@ const Profile = ({route, navigation}) => {
                 />
               </View>
             ))}
+          <TouchableOpacity
+            // disabled={!reviewText || !reviewStars}
+            // onPress={handleReviewSubmit}
+            onPress={logOutHandler}
+            style={{...styles.reviewsButton, ...styles.logOutButton}}>
+            <Text style={styles.buttonText}>Log out</Text>
+          </TouchableOpacity>
         </ScrollView>
       )}
       {!isLoggedIn && (
@@ -184,6 +195,9 @@ const Profile = ({route, navigation}) => {
   );
 };
 const styles = StyleSheet.create({
+  logOutButton: {
+    marginTop: 20,
+  },
   reviewsButton: {
     borderColor: 'black',
     borderWidth: 1,

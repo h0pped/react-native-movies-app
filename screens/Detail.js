@@ -12,9 +12,15 @@ import {
   RefreshControl,
   Button,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 import StarRating from 'react-native-star-rating';
-import {getMovie, getSimilarMovies} from '../services/services.js';
+import {
+  getMovie,
+  getSimilarMovies,
+  getUserLists,
+  addMovieToList,
+} from '../services/services.js';
 import PlayButton from '../components/PlayButton.js';
 import Video from '../components/Video.js';
 import List from '../components/List.js';
@@ -24,15 +30,23 @@ const height = Dimensions.get('screen').height;
 
 const extractYear = date => date.split('-')[0];
 
+const addMovieToListHandler = async (listId, movieId) => {
+  const list = await addMovieToList(listId, movieId);
+  if (list) {
+    // eslint-disable-next-line no-alert
+    alert('Movie added to list');
+  }
+};
 const Detail = ({route, navigation}) => {
   const movieId = route.params.movieDetail._id;
   const [movieDetail, setMovieDetail] = useState(null);
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [loggedIn, setIsLoggedIn] = useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
-
+  const [lists, setLists] = useState([]);
+  const getAuthInfo = async () => await AsyncStorage.getItem('email');
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
 
@@ -43,10 +57,20 @@ const Detail = ({route, navigation}) => {
       };
       setMovieDetail(m);
       setRefreshing(false);
-      console.log('movie: ', m);
     });
     getSimilarMovies(movieId).then(moviesArr => {
       setSimilarMovies(moviesArr);
+    });
+
+    getAuthInfo().then(email => {
+      if (email) {
+        setIsLoggedIn(true);
+        getUserLists(email).then(fetchedLists => {
+          setLists(fetchedLists);
+        });
+      } else {
+        setIsLoggedIn(false);
+      }
     });
   }, [movieId]);
 
@@ -70,6 +94,17 @@ const Detail = ({route, navigation}) => {
     });
     getSimilarMovies(movieId).then(moviesArr => {
       setSimilarMovies(moviesArr);
+    });
+
+    getAuthInfo().then(email => {
+      if (email) {
+        setIsLoggedIn(true);
+        getUserLists(email).then(fetchedLists => {
+          setLists(fetchedLists);
+        });
+      } else {
+        setIsLoggedIn(false);
+      }
     });
   }, [movieId]);
   return (
@@ -113,7 +148,11 @@ const Detail = ({route, navigation}) => {
               {movieDetail.genres && (
                 <View style={styles.genres}>
                   {movieDetail.genres.slice(0, 3).map(genre => {
-                    return <Text style={styles.genre}>{genre.name} </Text>;
+                    return (
+                      <Text key={genre.name} style={styles.genre}>
+                        {genre.name}{' '}
+                      </Text>
+                    );
                   })}
                 </View>
               )}
@@ -168,6 +207,9 @@ const Detail = ({route, navigation}) => {
                 navigation={navigation}
                 title="Similar Movies"
                 content={similarMovies}
+                isLoggedIn={loggedIn}
+                userLists={lists}
+                addMovieToList={addMovieToListHandler}
               />
             </View>
           </ScrollView>

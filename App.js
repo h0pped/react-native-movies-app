@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {LogBox} from 'react-native';
 import Home from './screens/Home';
 import Detail from './screens/Detail';
 import {NavigationContainer} from '@react-navigation/native';
@@ -12,6 +12,12 @@ import Reviews from './screens/Reviews';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
 import {MenuProvider} from 'react-native-popup-menu';
+
+LogBox.ignoreLogs([
+  'ViewPropTypes will be removed',
+  'AsyncStorage has been extracted',
+  'Found screens',
+]);
 // import {getPopularMovies} from './services/services';
 
 // const Stack = createNativeStackNavigator();

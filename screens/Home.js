@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   AsyncStorage,
+  RefreshControl,
 } from 'react-native';
 import {
   getPopularMovies,
@@ -40,12 +41,53 @@ const Home = ({navigation}) => {
   const [documentaryMovies, setDocumentaryMovies] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userLists, setUserLists] = useState([]);
+  const [refreshing, setIsRefreshing] = useState(false);
 
   const addMovieToListHandler = async (listId, movieId) => {
     const list = await addMovieToList(listId, movieId);
     if (list) {
+      // eslint-disable-next-line no-alert
       alert('Movie added to list');
     }
+  };
+  const onRefresh = () => {
+    setIsLoaded(false);
+    getAuthInfo()
+      .then(email => {
+        if (email) {
+          setIsLoggedIn(true);
+        }
+        getData(email).then(
+          ([
+            upcomingMoviesArr,
+            popularMoviesArr,
+            documentaryMoviesArr,
+            familyMoviesArr,
+            comedyMoviesArr,
+            warMoviesArr,
+            userListsArr,
+          ]) => {
+            // console.log(upcomingMoviesArr);
+            const moviesImagesArray = upcomingMoviesArr.map(
+              movieItem =>
+                `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`,
+            );
+            setMoviesSlider(upcomingMoviesArr);
+            setMoviesImages(moviesImagesArray);
+            setPopularMovies(popularMoviesArr);
+            setDocumentaryMovies(documentaryMoviesArr);
+            setFamilyMovies(familyMoviesArr);
+            setComedyMovies(comedyMoviesArr);
+            setwarMovies(warMoviesArr);
+            setUserLists(userListsArr);
+          },
+        );
+      })
+      .catch(err => {
+        console.log(err);
+        setError(true);
+      })
+      .finally(() => setIsLoaded(true));
   };
 
   useEffect(() => {
@@ -53,6 +95,7 @@ const Home = ({navigation}) => {
       getAuthInfo().then(data => {
         if (data) {
           setIsLoggedIn(true);
+
           getUserLists(data).then(lists => {
             setUserLists(lists);
           });
@@ -61,6 +104,7 @@ const Home = ({navigation}) => {
         }
       });
     });
+
     return unsubscribe;
   }, [navigation]);
 
@@ -122,7 +166,10 @@ const Home = ({navigation}) => {
   return (
     <React.Fragment>
       {isLoaded && !error && (
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           {moviesImages && (
             <View style={styles.sliderContainer}>
               <SliderBox
@@ -130,6 +177,9 @@ const Home = ({navigation}) => {
                 onCurrentImagePressed={index => {
                   navigation.navigate('Detail', {
                     movieDetail: moviesSlider[index],
+                    lists: userLists,
+                    isLoggedIn: isLoggedIn,
+                    addMovieToListHandler: addMovieToListHandler,
                   });
                 }}
                 sliderBoxHeight={dimensions.height * 0.7}
@@ -203,7 +253,7 @@ const Home = ({navigation}) => {
       )}
       {!isLoaded && (
         <View style={styles.sliderContainer}>
-          <ActivityIndicator size="large" color="#00ff00" />
+          <ActivityIndicator size="large" color="gray" />
           <Text>Loading...</Text>
         </View>
       )}

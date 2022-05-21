@@ -35,6 +35,7 @@ class List extends React.PureComponent {
             </TouchableOpacity>
           )}
         </View>
+        {console.log('IS LOGGED IN', isLoggedIn)}
         <View style={styles.flatList}>
           {content.length > 0 ? (
             <FlatList
