@@ -8,9 +8,7 @@ import {
   ActivityIndicator,
   View,
   Modal,
-  Pressable,
   RefreshControl,
-  Button,
   TouchableOpacity,
   AsyncStorage,
 } from 'react-native';
@@ -46,7 +44,9 @@ const Detail = ({route, navigation}) => {
   const [loggedIn, setIsLoggedIn] = useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
   const [lists, setLists] = useState([]);
+
   const getAuthInfo = async () => await AsyncStorage.getItem('email');
+
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
 

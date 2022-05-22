@@ -7,8 +7,9 @@ import {
   TextInput,
   StyleSheet,
   FlatList,
+  AsyncStorage,
 } from 'react-native';
-import {searchMovies} from '../services/services';
+import {searchMovies, addMovieToList, getUserLists} from '../services/services';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Card from '../components/Card';
 
@@ -17,7 +18,18 @@ const Search = ({navigation}) => {
   const [items, setItems] = useState(null);
   const [input, setInput] = useState('');
   const [error, setError] = useState(null);
+  const [lists, setLists] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const getAuthInfo = async () => await AsyncStorage.getItem('email');
+
+  const addMovieToListHandler = async (listId, movieId) => {
+    const list = await addMovieToList(listId, movieId);
+    if (list) {
+      // eslint-disable-next-line no-alert
+      alert('Movie added to list');
+    }
+  };
   useEffect(() => {
     const delayDebounceFn = setTimeout(async () => {
       if (input) {
@@ -37,6 +49,35 @@ const Search = ({navigation}) => {
     }, 500);
     return () => clearTimeout(delayDebounceFn);
   }, [input]);
+  useEffect(() => {
+    getAuthInfo().then(email => {
+      if (email) {
+        setIsLoggedIn(true);
+        getUserLists(email).then(fetchedLists => {
+          setLists(fetchedLists);
+        });
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+  }, []);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getAuthInfo().then(data => {
+        if (data) {
+          setIsLoggedIn(true);
+
+          getUserLists(data).then(fetchedLists => {
+            setLists(fetchedLists);
+          });
+        } else {
+          setIsLoggedIn(false);
+        }
+      });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   return (
     <React.Fragment>
       <SafeAreaView>
@@ -62,6 +103,9 @@ const Search = ({navigation}) => {
                   item={item}
                   style={style.card}
                   shortName={true}
+                  addMovieToList={addMovieToListHandler}
+                  isLoggedIn={isLoggedIn}
+                  userLists={lists}
                 />
               )}
               keyExtractor={item => item._id}
